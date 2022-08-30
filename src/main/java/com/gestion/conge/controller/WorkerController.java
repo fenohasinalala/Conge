@@ -1,5 +1,6 @@
 package com.gestion.conge.controller;
 
+import com.gestion.conge.controller.mapper.WorkerMapper;
 import com.gestion.conge.model.Worker;
 import com.gestion.conge.service.WorkerService;
 import lombok.AllArgsConstructor;
@@ -19,13 +20,17 @@ import java.util.List;
 
 public class WorkerController {
     private WorkerService workerService;
+    private WorkerMapper workerMapper;
 
     @GetMapping("/workers")
     public List<Worker> getWorkers(@RequestParam int page,
                                    @RequestParam(value = "page_size") int pageSize,
                                    @RequestParam(value = "first_name",required = false , defaultValue = "") String firstName,
                                    @RequestParam(value = "last_name",required = false , defaultValue = "") String lastName){
-        return workerService.getWorkers(page, pageSize, firstName, lastName);
+        return workerService.getWorkers(page, pageSize, firstName, lastName)
+                .stream()
+                .map(workerMapper::toRestWorker)
+                .toList();
     }
 
     @PostMapping("/workers")
