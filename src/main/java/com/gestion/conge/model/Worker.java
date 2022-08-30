@@ -77,17 +77,31 @@ public class Worker {
     @Transient
     private Double leaveTaken;
 
+    @Transient
+    private Double leaveRemained;
+
 
     public enum Sex {
         F,M;
     }
 
     public Double getleaveGet() {
-        return Period.between(this.entranceDatetime, LocalDate.now()).getYears()*12*2.5;
+        Period dif = Period.between(this.entranceDatetime, LocalDate.now());
+        Integer MonthAcquisition = dif.getYears()*12+dif.getMonths()+dif.getDays()/30;
+
+        return 1D;
     }
+
+
 
     public Double getLeaveTaken() {
         return 100D;
     }
+/*
+    public Double getLeaveRemained(){
+
+    }
+
+ */
 
 }
