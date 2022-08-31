@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -34,7 +35,7 @@ public class WorkerController {
     }
 
     @PostMapping("/workers")
-    public Worker addWorker(@RequestBody Worker Worker){
+    public Worker addWorker(@Valid @RequestBody Worker Worker){
         return workerService.addWorker(Worker);
     }
 
@@ -49,8 +50,8 @@ public class WorkerController {
     }
 
     @PutMapping("/workers/{id}")
-    public Worker modifyWorkerById(@PathVariable Long id, @RequestBody Worker newWorker) throws Exception {
-        return workerService.putModificationWorkerById(id, newWorker);
+    public Worker modifyWorkerById(@PathVariable Long id,@Valid @RequestBody Worker newWorker) throws Exception {
+        return workerMapper.toRestWorker(workerService.putModificationWorkerById(id, newWorker));
     }
 
 

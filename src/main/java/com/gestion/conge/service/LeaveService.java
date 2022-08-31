@@ -1,5 +1,6 @@
 package com.gestion.conge.service;
 
+import com.gestion.conge.exception.ResourceNotFoundException;
 import com.gestion.conge.model.Leave;
 import com.gestion.conge.repository.LeaveRepository;
 import lombok.AllArgsConstructor;
@@ -36,6 +37,7 @@ public class LeaveService {
     }
 
     public Leave addLeaveType(Leave newleave){
+
         Optional<Leave> leave = leaveRepository.findLeaveByType(newleave.getType());
         if (leave.isPresent()){
             throw new RuntimeException("Leave type already exists");
@@ -46,13 +48,13 @@ public class LeaveService {
 
     public Leave getLeaveTypeById(Long id)  {
         Leave leave = leaveRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("LeaveType with id "+id+" does not exists"));
+                .orElseThrow(()-> new ResourceNotFoundException("LeaveType with id "+id+" does not exists"));
         return leave;
     }
 
     public Leave deleteLeaveTypeById(Long id) {
         Leave leave = leaveRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("LeaveType with id "+id+" does not exists"));
+                .orElseThrow(()-> new ResourceNotFoundException("LeaveType with id "+id+" does not exists"));
         leaveRepository.deleteById(id);
         return leave;
     }
@@ -60,7 +62,7 @@ public class LeaveService {
     @Transactional
     public Leave modifyLeaveById(Long id, Leave newLeave) {
         Leave leave = leaveRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("LeaveType with id "+id+" does not exists"));
+                .orElseThrow(()-> new ResourceNotFoundException("LeaveType with id "+id+" does not exists"));
         if (newLeave.getType()!=null && newLeave.getType().length()>0 && !Objects.equals(newLeave.getType(),leave.getType())){
             leave.setType(newLeave.getType());
         }

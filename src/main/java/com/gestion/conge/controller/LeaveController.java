@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -34,8 +35,8 @@ public class LeaveController {
 
 
     @PostMapping("/leave-type")
-    public Leave addLeaveType(@RequestBody Leave newleave) throws Exception {
-        return leaveService.addLeaveType(newleave);
+    public Leave addLeaveType(@Valid @RequestBody Leave newleave) throws Exception {
+        return leaveMapper.toRestLeave(leaveService.addLeaveType(newleave)) ;
     }
 
     @GetMapping("/leave-type/{id}")
@@ -49,7 +50,7 @@ public class LeaveController {
     }
 
     @PutMapping("/leave-type/{id}")
-    public Leave modifyLeaveTypeById(@PathVariable Long id, @RequestBody Leave newLeave) throws Exception {
+    public Leave modifyLeaveTypeById(@PathVariable Long id,@Valid @RequestBody Leave newLeave) throws Exception {
         return leaveService.modifyLeaveById(id, newLeave);
     }
 
