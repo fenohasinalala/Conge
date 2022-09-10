@@ -17,9 +17,6 @@ public class WorkerMapper {
         restWorker.setFirstName(worker.getFirstName());
         restWorker.setEntranceDatetime(worker.getEntranceDatetime());
         restWorker.setId(worker.getId());
-        restWorker.setLeaveGet(worker.getleaveGet());
-        restWorker.setLeaveTaken(worker.getLeaveTaken());
-        restWorker.setLeaveRemained(worker.getLeaveRemained());
         restWorker.setPost(worker.getPost());
         return restWorker;
     }
