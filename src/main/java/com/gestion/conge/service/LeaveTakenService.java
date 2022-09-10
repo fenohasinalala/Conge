@@ -1,9 +1,9 @@
 package com.gestion.conge.service;
 
-import com.gestion.conge.model.Leave;
+import com.gestion.conge.model.LeaveType;
 import com.gestion.conge.model.LeaveTaken;
 import com.gestion.conge.model.Worker;
-import com.gestion.conge.repository.LeaveRepository;
+import com.gestion.conge.repository.LeaveTypeRepository;
 import com.gestion.conge.repository.LeaveTakenRepository;
 import com.gestion.conge.repository.WorkerRepository;
 import lombok.AllArgsConstructor;
@@ -26,7 +26,7 @@ public class LeaveTakenService {
     private LeaveTakenRepository leaveTakenRepository ;
     private WorkerRepository workerRepository;
 
-    private LeaveRepository leaveRepository;
+    private LeaveTypeRepository leaveRepository;
 
     public List<LeaveTaken> getLeaves(int page, int pageSize) {
         if(page<1){
@@ -44,7 +44,7 @@ public class LeaveTakenService {
     public LeaveTaken addLeave(LeaveTaken leaveTaken) {
         Worker validWorker = workerRepository.findById(leaveTaken.getWorker().getId())
                 .orElseThrow();
-        Leave validLeaveType = leaveRepository.findById(leaveTaken.getLeave().getId())
+        LeaveType validLeaveType = leaveRepository.findById(leaveTaken.getLeave().getId())
                 .orElseThrow();
         LeaveTaken newLeaveTaken = leaveTaken;
         if( Period.between(LocalDate.now(), leaveTaken.getStartDate()).getDays()>=0){

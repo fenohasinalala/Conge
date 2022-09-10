@@ -1,12 +1,12 @@
 package com.gestion.conge.controller.mapper;
 
-import com.gestion.conge.model.Leave;
+import com.gestion.conge.model.LeaveType;
 import org.springframework.stereotype.Component;
 
 @Component
 public class LeaveMapper {
-    public Leave toRestLeave(Leave leave){
-        Leave restLeave = new Leave();
+    public LeaveType toRestLeave(LeaveType leave){
+        LeaveType restLeave = new LeaveType();
         restLeave.setId(leave.getId());
         restLeave.setType(leave.getType());
         restLeave.setDescription(leave.getDescription());

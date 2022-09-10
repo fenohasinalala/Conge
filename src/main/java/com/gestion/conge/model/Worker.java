@@ -22,7 +22,6 @@ import javax.persistence.Transient;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
-import java.time.Period;
 
 @Entity
 @Table
@@ -72,6 +71,9 @@ public class Worker {
     private Post post;
 
     @Transient
+    private Double leaveInProgress;
+
+    @Transient
     private Double leaveGet;
 
     @Transient
@@ -85,18 +87,21 @@ public class Worker {
         F,M;
     }
 
+    /*
     public Double getleaveGet() {
         Period dif = Period.between(this.entranceDatetime, LocalDate.now());
+        Duration duration = Duration.between(this.entranceDatetime,LocalDate.now());
         Integer MonthAcquisition = dif.getYears()*12+dif.getMonths()+dif.getDays()/30;
-
-        return 1D;
+        Integer DaysAcquisition = dif.getYears()*12*365+dif.getMonths()*30+dif.getDays();
+        return Double.valueOf(MonthAcquisition)*2.5;
     }
-
 
 
     public Double getLeaveTaken() {
         return 100D;
     }
+
+     */
 /*
     public Double getLeaveRemained(){
 
