@@ -1,5 +1,6 @@
 package com.gestion.conge.controller;
 
+import com.gestion.conge.model.LeaveSummary;
 import com.gestion.conge.model.LeaveTaken;
 import com.gestion.conge.service.LeaveTakenService;
 import lombok.AllArgsConstructor;
@@ -51,5 +52,8 @@ public class LeaveTakenController {
         return leaveTakenService.getLeaveTakenByWorkerId(id);
     }
 
-
+    @GetMapping("/workers/{id}/leaves-summary")
+    public LeaveSummary getLeaveSummaryByWorkerId(@PathVariable Long id) throws Exception {
+        return leaveTakenService.getLeaveSummaryByWorkerId(id);
+    }
 }

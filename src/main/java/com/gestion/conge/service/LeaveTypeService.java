@@ -21,10 +21,8 @@ import static org.springframework.data.domain.Sort.Direction.ASC;
 @Service
 @AllArgsConstructor
 public class LeaveTypeService {
-
     private LeaveTypeRepository leaveRepository ;
     private LeaveTypeValidator leaveTypeValidator;
-
     public List<LeaveType> getLeavesType(int page, int pageSize, String type, String description) {
         if(page<1){
             throw new BadRequestException("page must be >=1");
@@ -35,8 +33,8 @@ public class LeaveTypeService {
         Pageable pageable = PageRequest.of(page - 1,pageSize,
                 Sort.by(ASC,"type"));
         return leaveRepository.findByTypeContainingIgnoreCaseAndDescriptionContainingIgnoreCase(type, description, pageable);
-
     }
+
 
     public LeaveType addLeaveType(LeaveType newleave){
         if (newleave.getId()!=null){
@@ -51,11 +49,13 @@ public class LeaveTypeService {
         return newleave;
     }
 
+
     public LeaveType getLeaveTypeById(Long id)  {
         LeaveType leave = leaveRepository.findById(id)
                 .orElseThrow(()-> new ResourceNotFoundException("LeaveType with id "+id+" does not exists"));
         return leave;
     }
+
 
     public LeaveType deleteLeaveTypeById(Long id) {
         LeaveType leave = leaveRepository.findById(id)
@@ -63,6 +63,7 @@ public class LeaveTypeService {
         leaveRepository.deleteById(id);
         return leave;
     }
+
 
     @Transactional
     public LeaveType modifyLeaveById(Long id, LeaveType newLeave) {

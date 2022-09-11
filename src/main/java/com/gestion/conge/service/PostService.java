@@ -21,15 +21,14 @@ import static org.springframework.data.domain.Sort.Direction.ASC;
 @Service
 @AllArgsConstructor
 public class PostService {
-
     private PostRepository postRepository;
     private PostValidator postValidator;
-
     public List<Post> getPosts(int page, int pageSize, String name) {
         Pageable pageable = PageRequest.of(page - 1,pageSize,
                 Sort.by(ASC,"name"));
         return postRepository.findByNameContainingIgnoreCase(name,pageable);
     }
+
 
     public Post addPost(Post post) {
         if (post.getId()!=null){
@@ -43,11 +42,13 @@ public class PostService {
         return postRepository.save(post);
     }
 
+
     public Post getPostById(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("Post with id "+id +" does not exists"));
         return post;
     }
+
 
     public Post deletePostById(Long id) {
         Post post = postRepository.findById(id)
@@ -55,6 +56,7 @@ public class PostService {
         postRepository.deleteById(id);
         return post;
     }
+
 
     @Transactional
     public Post modifyPostById(Long id, Post newPost) {
@@ -68,7 +70,6 @@ public class PostService {
             if (postOptional.isPresent()){
                 throw new BadRequestException("Post with the same name already exist");
             }
-
             post.setName(newPost.getName());
         }
         return post;

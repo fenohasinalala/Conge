@@ -70,43 +70,11 @@ public class Worker {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    @Transient
-    private Double leaveInProgress;
-
-    @Transient
-    private Double leaveGet;
-
-    @Transient
-    private Double leaveTaken;
-
-    @Transient
-    private Double leaveRemained;
-
 
     public enum Sex {
         F,M;
     }
 
-    /*
-    public Double getleaveGet() {
-        Period dif = Period.between(this.entranceDatetime, LocalDate.now());
-        Duration duration = Duration.between(this.entranceDatetime,LocalDate.now());
-        Integer MonthAcquisition = dif.getYears()*12+dif.getMonths()+dif.getDays()/30;
-        Integer DaysAcquisition = dif.getYears()*12*365+dif.getMonths()*30+dif.getDays();
-        return Double.valueOf(MonthAcquisition)*2.5;
-    }
 
-
-    public Double getLeaveTaken() {
-        return 100D;
-    }
-
-     */
-/*
-    public Double getLeaveRemained(){
-
-    }
-
- */
 
 }
