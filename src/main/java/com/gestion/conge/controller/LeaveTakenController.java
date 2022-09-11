@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,11 +40,11 @@ public class LeaveTakenController {
     public LeaveTaken deleteLeaveById(@PathVariable Long id) throws Exception {
         return leaveTakenService.deleteLeaveById(id);
     }
-/*
+
     @PutMapping("/leaves/{id}")
-    public Leave modifyLeaveById(@PathVariable Long id, @RequestBody Leave newLeave) throws Exception {
-        return leaveTakenService.putModificationLeaveById(id, newLeave);
+    public LeaveTaken modifyLeaveById(@PathVariable Long id, @RequestBody LeaveTaken leaveTaken) throws Exception {
+        return leaveTakenService.putModificationLeaveById(id, leaveTaken);
     }
 
- */
+
 }

@@ -1,7 +1,9 @@
 package com.gestion.conge.service;
 
+import com.gestion.conge.exception.BadRequestException;
 import com.gestion.conge.exception.ResourceNotFoundException;
 import com.gestion.conge.model.LeaveType;
+import com.gestion.conge.model.validation.LeaveTypeValidator;
 import com.gestion.conge.repository.LeaveTypeRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -21,26 +23,26 @@ import static org.springframework.data.domain.Sort.Direction.ASC;
 public class LeaveTypeService {
 
     private LeaveTypeRepository leaveRepository ;
+    private LeaveTypeValidator leaveTypeValidator;
 
     public List<LeaveType> getLeavesType(int page, int pageSize, String type, String description) {
         if(page<1){
-            throw new RuntimeException("page must be >=1");
+            throw new BadRequestException("page must be >=1");
         }
         if(pageSize>200){
-            throw new RuntimeException("page size too large, must be <=200");
+            throw new BadRequestException("page size too large, must be <=200");
         }
         Pageable pageable = PageRequest.of(page - 1,pageSize,
                 Sort.by(ASC,"type"));
         return leaveRepository.findByTypeContainingIgnoreCaseAndDescriptionContainingIgnoreCase(type, description, pageable);
 
-        //return leaveRepository.findAll();
     }
 
     public LeaveType addLeaveType(LeaveType newleave){
-
+        leaveTypeValidator.accept(newleave);
         Optional<LeaveType> leave = leaveRepository.findLeaveByType(newleave.getType());
         if (leave.isPresent()){
-            throw new RuntimeException("Leave type already exists");
+            throw new BadRequestException("Leave type already exists");
         }
         leaveRepository.save(newleave);
         return newleave;
@@ -61,8 +63,10 @@ public class LeaveTypeService {
 
     @Transactional
     public LeaveType modifyLeaveById(Long id, LeaveType newLeave) {
+        leaveTypeValidator.accept(newLeave);
         LeaveType leave = leaveRepository.findById(id)
                 .orElseThrow(()-> new ResourceNotFoundException("LeaveType with id "+id+" does not exists"));
+
         if (newLeave.getType()!=null && newLeave.getType().length()>0 && !Objects.equals(newLeave.getType(),leave.getType())){
             leave.setType(newLeave.getType());
         }

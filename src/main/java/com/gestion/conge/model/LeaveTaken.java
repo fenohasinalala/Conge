@@ -50,7 +50,7 @@ public class LeaveTaken {
 
     @ManyToOne
     @JoinColumn(name = "leave_id", nullable = false)
-    private LeaveType leave;
+    private LeaveType leaveType;
 
 
     public Integer getDuration() {

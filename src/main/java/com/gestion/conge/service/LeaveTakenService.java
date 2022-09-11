@@ -1,8 +1,11 @@
 package com.gestion.conge.service;
 
+import com.gestion.conge.exception.BadRequestException;
+import com.gestion.conge.exception.ResourceNotFoundException;
 import com.gestion.conge.model.LeaveType;
 import com.gestion.conge.model.LeaveTaken;
 import com.gestion.conge.model.Worker;
+import com.gestion.conge.model.validation.LeaveTakenValidator;
 import com.gestion.conge.repository.LeaveTypeRepository;
 import com.gestion.conge.repository.LeaveTakenRepository;
 import com.gestion.conge.repository.WorkerRepository;
@@ -24,16 +27,18 @@ import static org.springframework.data.domain.Sort.Direction.ASC;
 public class LeaveTakenService {
 
     private LeaveTakenRepository leaveTakenRepository ;
+    private LeaveTypeRepository leaveTypeRepository;
+    private LeaveTakenValidator leaveTakenValidator;
     private WorkerRepository workerRepository;
 
     private LeaveTypeRepository leaveRepository;
 
     public List<LeaveTaken> getLeaves(int page, int pageSize) {
         if(page<1){
-            throw new RuntimeException("page must be >=1");
+            throw new BadRequestException("page must be >=1");
         }
         if(pageSize>200){
-            throw new RuntimeException("page size too large, must be <=200");
+            throw new BadRequestException("page size too large, must be <=200");
         }
         Pageable pageable = PageRequest.of(page - 1,pageSize,
                 Sort.by(ASC,"startDate"));
@@ -42,14 +47,15 @@ public class LeaveTakenService {
 
     @Transactional
     public LeaveTaken addLeave(LeaveTaken leaveTaken) {
+        leaveTakenValidator.accept(leaveTaken);
         Worker validWorker = workerRepository.findById(leaveTaken.getWorker().getId())
-                .orElseThrow();
-        LeaveType validLeaveType = leaveRepository.findById(leaveTaken.getLeave().getId())
-                .orElseThrow();
+                .orElseThrow(()->new ResourceNotFoundException("Worker with id "+leaveTaken.getWorker().getId()+" does not exists"));
+        LeaveType validLeaveType = leaveRepository.findById(leaveTaken.getLeaveType().getId())
+                .orElseThrow(()->new ResourceNotFoundException("Leaver Type with id "+leaveTaken.getLeaveType().getId()+" does not exists"));
         LeaveTaken newLeaveTaken = leaveTaken;
         if( Period.between(LocalDate.now(), leaveTaken.getStartDate()).getDays()>=0){
             newLeaveTaken.setWorker(validWorker);
-            newLeaveTaken.setLeave(validLeaveType);
+            newLeaveTaken.setLeaveType(validLeaveType);
             leaveTakenRepository.save(newLeaveTaken);
         }
         return newLeaveTaken;
@@ -57,14 +63,31 @@ public class LeaveTakenService {
 
     public LeaveTaken getLeaveTakenById(Long id) {
         LeaveTaken leaveTaken = leaveTakenRepository.findById(id)
-                .orElseThrow(()->new RuntimeException("LeaveTaken with id "+id+" does not exists"));
+                .orElseThrow(()->new ResourceNotFoundException("LeaveTaken with id "+id+" does not exists"));
         return leaveTaken;
     }
 
     public LeaveTaken deleteLeaveById(Long id) {
         LeaveTaken leaveTaken = leaveTakenRepository.findById(id)
-                .orElseThrow(()->new RuntimeException("LeaveTaken with id "+id+" does not exists"));
+                .orElseThrow(()->new ResourceNotFoundException("LeaveTaken with id "+id+" does not exists"));
         leaveTakenRepository.delete(leaveTaken);
         return leaveTaken;
+    }
+
+    public LeaveTaken putModificationLeaveById(Long id, LeaveTaken leaveTaken) {
+        leaveTakenValidator.accept(leaveTaken);
+        Worker validWorker = workerRepository.findById(leaveTaken.getWorker().getId())
+                .orElseThrow(()->new ResourceNotFoundException("Worker with id "+leaveTaken.getWorker().getId()+" does not exists"));
+        LeaveType validLeaveType = leaveRepository.findById(leaveTaken.getLeaveType().getId())
+                .orElseThrow(()->new ResourceNotFoundException("Leaver Type with id "+leaveTaken.getLeaveType().getId()+" does not exists"));
+        LeaveTaken newLeaveTaken = leaveTakenRepository.findById(id)
+                .orElseThrow(()->new ResourceNotFoundException("LeaveTaken with id "+id+" does not exists"));
+        if( Period.between(LocalDate.now(), leaveTaken.getStartDate()).getDays()>=0){
+            newLeaveTaken.setWorker(validWorker);
+            newLeaveTaken.setLeaveType(validLeaveType);
+            leaveTakenRepository.save(newLeaveTaken);
+        }
+        return newLeaveTaken;
+
     }
 }
