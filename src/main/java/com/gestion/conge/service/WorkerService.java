@@ -41,6 +41,9 @@ public class WorkerService {
     }
 
     public Worker addWorker(Worker worker) {
+        if (worker.getId()!=null){
+            throw new BadRequestException("post request don't need id");
+        }
         workerValidator.accept(worker);
         Optional<Worker> workerByEmail = workerRepository.findWorkerByEmail(worker.getEmail());
         Optional<Worker> workerByPhone = workerRepository.findWorkerByPhone(worker.getPhone());

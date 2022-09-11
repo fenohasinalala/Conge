@@ -47,6 +47,9 @@ public class LeaveTakenService {
 
     @Transactional
     public LeaveTaken addLeave(LeaveTaken leaveTaken) {
+        if (leaveTaken.getId()!=null){
+            throw new BadRequestException("post request don't need id");
+        }
         leaveTakenValidator.accept(leaveTaken);
         Worker validWorker = workerRepository.findById(leaveTaken.getWorker().getId())
                 .orElseThrow(()->new ResourceNotFoundException("Worker with id "+leaveTaken.getWorker().getId()+" does not exists"));

@@ -32,6 +32,9 @@ public class PostService {
     }
 
     public Post addPost(Post post) {
+        if (post.getId()!=null){
+            throw new BadRequestException("post request don't need id");
+        }
         postValidator.accept(post);
         Optional<Post> postOptional = postRepository.findPostByName(post.getName());
         if (postOptional.isPresent()){

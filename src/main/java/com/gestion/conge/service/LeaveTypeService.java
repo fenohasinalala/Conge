@@ -39,6 +39,9 @@ public class LeaveTypeService {
     }
 
     public LeaveType addLeaveType(LeaveType newleave){
+        if (newleave.getId()!=null){
+            throw new BadRequestException("post request don't need id");
+        }
         leaveTypeValidator.accept(newleave);
         Optional<LeaveType> leave = leaveRepository.findLeaveByType(newleave.getType());
         if (leave.isPresent()){
