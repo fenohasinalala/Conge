@@ -93,4 +93,12 @@ public class LeaveTakenService {
         return newLeaveTaken;
 
     }
+
+    public List<LeaveTaken> getLeaveTakenByWorkerId(Long id) {
+        Worker validWorker = workerRepository.findById(id)
+            .orElseThrow(()->new ResourceNotFoundException("Worker with id "+id+" does not exists"));
+        return leaveTakenRepository.findByWorkerId(id);
+
+
+    }
 }

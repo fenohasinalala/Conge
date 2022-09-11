@@ -46,5 +46,10 @@ public class LeaveTakenController {
         return leaveTakenService.putModificationLeaveById(id, leaveTaken);
     }
 
+    @GetMapping("/workers/{id}/leaves")
+    public List<LeaveTaken> getLeaveTakenByWorkerId(@PathVariable Long id) throws Exception {
+        return leaveTakenService.getLeaveTakenByWorkerId(id);
+    }
+
 
 }
