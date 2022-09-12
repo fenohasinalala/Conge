@@ -6,13 +6,21 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+import java.time.Month;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
 public class LeaveSummary {
-    private Worker worker;
+
+    private LocalDate startDateRef;
+
+    private LocalDate endDateRef;
+
+    private Month monthRef;
 
     private Double leaveInProgress;
 
@@ -21,6 +29,10 @@ public class LeaveSummary {
     private Double leaveTaken;
 
     private Double leaveRemained;
+
+    private Worker worker;
+
+
 
         /*
     public Double getleaveGet() {

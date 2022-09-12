@@ -18,7 +18,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.Period;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
@@ -48,12 +47,12 @@ public class LeaveTaken {
     private String comment;
 
     @ManyToOne
-    @JoinColumn(name = "worker_id", nullable = false)
-    private Worker worker;
-
-    @ManyToOne
     @JoinColumn(name = "leave_id", nullable = false)
     private LeaveType leaveType;
+
+    @ManyToOne
+    @JoinColumn(name = "worker_id", nullable = false)
+    private Worker worker;
 
 
     public Integer getDuration() {

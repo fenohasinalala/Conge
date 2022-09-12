@@ -48,6 +48,7 @@ public class LeaveTakenService {
 
     @Transactional
     public LeaveTaken addLeave(LeaveTaken leaveTaken) {
+
         if (leaveTaken.getId()!=null){
             throw new BadRequestException("post request don't need id");
         }
@@ -60,6 +61,10 @@ public class LeaveTakenService {
         LeaveType validLeaveType = leaveRepository.findById(leaveTaken.getLeaveType().getId())
                 .orElseThrow(()->new ResourceNotFoundException("Leaver Type with id "+leaveTaken.getLeaveType().getId()+" does not exists"));
         LeaveTaken newLeaveTaken = leaveTaken;
+        double leaveRemained = getLeaveSummaryByWorkerId(leaveTaken.getWorker().getId()).getLeaveRemained();
+        if(leaveTaken.getDuration()>leaveRemained){
+            throw new BadRequestException("Leave remained: "+leaveRemained +"is less than request Leave duration: "+leaveTaken.getDuration());
+        }
 
         for (LeaveTaken i:getLeaveTakenByWorkerId(leaveTaken.getWorker().getId())) {
             if ((i.getStartDate().isBefore(leaveTaken.getStartDate()) && i.getEndDate().isAfter(leaveTaken.getStartDate())) ||
@@ -141,33 +146,45 @@ public class LeaveTakenService {
         // reference period June 1 to May 31 of the following year
         LocalDate DebutRef;
         LocalDate EndRef;
+        LocalDate PreviousDebutRef;
+        LocalDate PreviousEndRef;
 
         if(date.isBefore(LocalDate.of(date.getYear(), Month.MAY, 31))){
             DebutRef = LocalDate.of(date.getYear()-1, Month.JUNE, 1);
             EndRef = LocalDate.of(date.getYear(), Month.MAY, 31);
+            PreviousDebutRef = LocalDate.of(date.getYear()-2, Month.JUNE, 1);
+            PreviousEndRef = LocalDate.of(date.getYear()-1, Month.MAY, 31);
         }else {
             DebutRef = LocalDate.of(date.getYear(), Month.JUNE, 1);
             EndRef = LocalDate.of(date.getYear()+1, Month.MAY, 31);
+            PreviousDebutRef = LocalDate.of(date.getYear()-1, Month.JUNE, 1);
+            PreviousEndRef = LocalDate.of(date.getYear(), Month.MAY, 31);
         }
+        LeaveSummary leaveSummary = new LeaveSummary();
 
         double totalLeaveInProgress = (2.5*(double) ChronoUnit.MONTHS.between(DebutRef.withDayOfMonth(1),date.withDayOfMonth(1)));
-        double totalLeaveNotPaidTaken;
+        double totalLeaveNotPaidTaken=0;
+        double daysOfWork=DAYS.between(DebutRef.withDayOfMonth(1),date.withDayOfMonth(1));
+        leaveSummary.setLeaveInProgress(calculateLeaveGet(listLeave, totalLeaveNotPaidTaken, DebutRef,  date,  daysOfWork,  totalLeaveInProgress));
+
         double totalLeavePaidTaken=0;
-
         for (LeaveTaken e: listLeave) {
-                if (e.getLeaveType().getType()=="congé payé"){
-                    totalLeavePaidTaken = totalLeavePaidTaken+getTotalLeaveTaken(e,DebutRef,date);
-                }else {
-                    totalLeavePaidTaken = DAYS.between(DebutRef,e.getEndDate());
-                }
-
+            if (e.getLeaveType().getId()!=1){//"congé payé"
+                totalLeavePaidTaken = totalLeavePaidTaken+getTotalLeaveTaken(e,DebutRef,date);
+            }
         }
+        leaveSummary.setLeaveTaken(totalLeavePaidTaken);
 
-        LeaveSummary leaveSummary = new LeaveSummary();
+        double totalLeaveGet=30;
+        double totalPreviousLeaveNotPaidTaken=0;
+        double PreviousDaysOfWork=52*6; //52weeks of work per month * 6days per week
+        leaveSummary.setLeaveGet(calculateLeaveGet(listLeave, totalPreviousLeaveNotPaidTaken, PreviousDebutRef,  PreviousEndRef,  PreviousDaysOfWork,  totalLeaveGet));
+
+        leaveSummary.setLeaveRemained(leaveSummary.getLeaveGet()-leaveSummary.getLeaveTaken());
         leaveSummary.setWorker(validWorker);
-        leaveSummary.setLeaveInProgress(2.5*(double) ChronoUnit.MONTHS.between(
-                DebutRef.withDayOfMonth(1),
-                date.withDayOfMonth(1)));
+        leaveSummary.setStartDateRef(DebutRef);
+        leaveSummary.setEndDateRef(EndRef);
+        leaveSummary.setMonthRef(date.getMonth());
         return leaveSummary;
     }
 
@@ -188,5 +205,21 @@ public class LeaveTakenService {
             totalLeaveTaken = totalLeaveTaken + DAYS.between(e.getStartDate(),date);
         }
         return totalLeaveTaken;
+    }
+
+
+    public Double calculateLeaveGet(List<LeaveTaken> listLeave, Double totalLeaveNotPaidTaken,LocalDate DebutRef, LocalDate date, Double daysOfWork, Double totalLeaveInProgress){
+        for (LeaveTaken e: listLeave) {
+            if (e.getLeaveType().getId()!=1){//"congé payé"
+                totalLeaveNotPaidTaken = totalLeaveNotPaidTaken+getTotalLeaveTaken(e,DebutRef,date);
+            }
+        }
+        if(totalLeaveNotPaidTaken<24){
+            return totalLeaveInProgress;
+        }else {
+            daysOfWork=daysOfWork-totalLeaveNotPaidTaken;
+            totalLeaveInProgress=daysOfWork*30/288; // 288days = 12months * 4weeks of work per month * 6days per week
+            return totalLeaveInProgress;
+        }
     }
 }
