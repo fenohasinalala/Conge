@@ -1,0 +1,923 @@
+openapi: 3.0.0
+info:
+  description: |
+    This is the API to get access the application to manage Workers and Leaves in Library.
+  version: "1.0.0"
+  title: Leaves manager for Library
+  
+servers:
+  # Added by API Auto Mocking Plugin  
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/fenohasinalala/library/1.0.0
+tags:
+  - name: Posts
+    description: Information about Posts    
+  - name: Leaves
+    description: Everything about Leaves
+  - name: Workers
+    description: Specification about Workers
+  - name: Security
+    description: Specification about Security
+paths:
+  /ping:
+    get:
+      tags:
+        - Security
+      summary: pong
+      operationId: ping
+      responses:
+        200:
+          description: pong
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: pong
+        400:
+            description: Error
+            content: {}
+  /posts:
+      get:
+        tags:
+          - "Posts"
+        summary: Get all Posts
+        operationId: getPosts
+        parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+        - name: name
+          description: Filter Posts by name, case is ignored
+          in: query
+          schema:
+            type: string
+        
+        responses:
+          200:
+            description: Success
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items: 
+                    $ref: '#/components/schemas/Post'
+          400:
+            description: Error
+            content: {}
+      post:
+        tags:
+          - "Posts"
+        summary: Add new Post
+        operationId: postPost
+        requestBody:
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/NewPost'
+        responses:
+          200:
+            description: Post added successfully
+            content:
+              application/json:
+                schema:
+                    $ref: '#/components/schemas/Post'
+          400:
+              description: Error
+              content: {}
+       
+  /posts/{id}:
+    get:
+      tags:
+        - "Posts"
+      summary: Get a Post by specified id
+      operationId: getPost
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        400:
+            description: Error
+            content: {}
+     
+    put:
+      tags:
+        - "Posts"
+      summary: Modify all information about Post given by ID
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        description: new Post
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewPost'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        400:
+          description: Error
+          content: {}
+    delete:
+      tags:
+        - "Posts"
+      summary: Delete a Post given by ID
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: Post deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        400:
+          description: Error
+          content: {}
+
+  /leaves:
+      get:
+        tags:
+          - Leaves
+        summary: Get all Leaves
+        operationId: getLeaves
+        parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+        - name: date
+          description: Filter Leaves by date,
+          in: query
+          schema:
+            type: string
+        - name: worker namePost
+          description: Filter Leaves by worker namePost
+          in: query
+          schema:
+            type: string
+        - name: type
+          description: Filter Leaves by type
+          in: query
+          schema:
+            type: string
+        
+        
+        responses:
+          200:
+            description: Success
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items: 
+                    $ref: '#/components/schemas/Leave'
+          400:
+            description: Error
+            content: {}
+      post:
+        tags:
+          - Leaves
+        summary: Add new Leaves
+        operationId: postLeaves
+        requestBody:
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/NewLeave'
+        responses:
+          200:
+            description: Leave added successfully
+            content:
+              application/json:
+                schema:
+                    $ref: '#/components/schemas/Leave'
+          400:
+              description: Error
+              content: {}
+       
+  /leaves/{id}:
+    get:
+      tags:
+        - Leaves
+      summary: Get a Leave by specified id
+      operationId: getLeave
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Leave'
+        400:
+            description: Error
+            content: {}
+    patch:
+      tags:
+      - Leaves
+      summary: Change some details of Leave given by ID
+      description: "Possible changes on : startDate, endDate, comment, workerId, leaveTypeId"
+      operationId: patchLeave
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewLeave'
+            
+                  
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Leave'
+        400:
+          description: Bad request
+          content: {}
+    put:
+      tags:
+        - Leaves
+      summary: Modify all information about Leave given by ID
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        description: new Leave
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewLeave'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Leave'
+        400:
+          description: Error
+          content: {}
+    delete:
+      tags:
+        - Leaves
+      summary: Delete a Leave given by ID
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: Leave deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Leave'
+        400:
+          description: Error
+          content: {}
+  /workers/{id_worker}/leaves:
+    get:
+      tags:
+        - Leaves
+      summary: Get a Leave by worker ID
+      operationId: getLeaveByWorker
+      parameters:
+        - name: id_Worker
+          in: path
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: Success
+          content:
+              application/json:
+                schema:
+                  type: array
+                  items: 
+                    $ref: '#/components/schemas/Leave'
+        400:
+            description: Error
+            content: {}
+
+
+  /workers:
+      get:
+        tags:
+          - Workers
+        summary: Get all Workers
+        operationId: getWorkers
+        parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+        - name: Leavename
+          description: Filter Workers by Leave name, case is ignored
+          in: query
+          schema:
+            type: string
+               
+        
+        responses:
+          200:
+            description: Success
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items: 
+                    $ref: '#/components/schemas/Worker'
+          400:
+            description: Error
+            content: {}
+      post:
+        tags:
+          - "Workers"
+        summary: Add new Workers
+        operationId: postWorkers
+        requestBody:
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/NewWorker'
+        responses:
+          200:
+            description: Workers added successfully
+            content:
+              application/json:
+                schema:
+                    $ref: '#/components/schemas/Worker'
+          400:
+              description: Error
+              content: {}
+       
+  /workers/{id}:
+    get:
+      tags:
+        - "Workers"
+      summary: Get a Worker by specified id
+      operationId: getWorker
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Worker'
+        400:
+            description: Error
+            content: {}
+    patch:
+      tags:
+      - "Workers"
+      summary: Change some details of Worker given by ID
+      description: "Possible changes on : firstName, lastName, email, email, phone, cin, birthDate, entranceDatetime, sex, address, idPost"
+      operationId: patchWorker
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewWorker'
+            
+
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Worker'
+        400:
+          description: Bad request
+          content: {}
+    put:
+      tags:
+        - "Workers"
+      summary: Modify all information about Worker given by ID
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        description: new Worker
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewWorker'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Worker'
+        400:
+          description: Error
+          content: {}
+    delete:
+      tags:
+        - "Workers"
+      summary: Delete a Worker given by ID
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: Worker deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Worker'
+        400:
+          description: Error
+          content: {}
+  /posts/{id_Leave}/workers:
+    get:
+      tags:
+        - "Workers"
+      summary: Get a Worker by Posts ID
+      operationId: getWorkerByPost
+      parameters:
+        - name: id_Post
+          in: path
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+            description: Success
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items: 
+                    $ref: '#/components/schemas/Worker'
+        400:
+            description: Error
+            content: {}
+  
+  /users:
+      get:
+        tags:
+          - Users
+        summary: Get all Users
+        operationId: getUsers
+        parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+        - name: first_name
+          description: Filter Users by first name, case is ignored
+          in: query
+          schema:
+            type: string
+        - name: last_name
+          description: Filter Users by last name, case is ignored
+          in: query
+          schema:
+            type: string
+        - name: role
+          description: Filter Users by role, case is ignored
+          in: query
+          schema:
+            type: string
+        
+        responses:
+          200:
+            description: Success
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items: 
+                    $ref: '#/components/schemas/User'
+          400:
+            description: Error
+            content: {}
+      post:
+        tags:
+          - Users
+        summary: Add new User
+        operationId: postUser
+        requestBody:
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/NewUser'
+        responses:
+          200:
+            description: User added successfully
+            content:
+              application/json:
+                schema:
+                    $ref: '#/components/schemas/User'
+          400:
+              description: Error
+              content: {}
+       
+  /users/{id}:
+    get:
+      tags:
+        - Users
+      summary: Get a User by specified id
+      operationId: getUser
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        400:
+            description: Error
+            content: {}
+    patch:
+      tags:
+      - Users
+      summary: Change some details of User given by ID
+      description: "Possible changes on : first name, last name, username, password or role"
+      operationId: patchUser
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewUser'
+            examples:
+              changeFirstName:
+                summary: Change first name
+                value:
+                  firstName : 'New first name'
+              changeLastName:
+                summary: Change last name
+                value:
+                  lastName : 'New last name' 
+              changeUsername:
+                summary: Change username
+                value:
+                  username : 'New username'
+              changePassword:
+                summary: Change Password
+                value:
+                  password : 'New password'  
+              changeRole:
+                summary: Change role
+                value:
+                  role : 'New role'           
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/NewUser'
+        400:
+          description: Bad request
+          content: {}
+    put:
+      tags:
+        - Users
+      summary: Modify all information about User given by ID
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        description: new Users
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewUser'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        400:
+          description: Error
+          content: {}
+    delete:
+      tags:
+        - Users
+      summary: Delete a User given by ID
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: User deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        400:
+          description: Error
+          content: {}
+    
+components:
+  schemas:
+    NewPost:
+      type: object
+      properties:
+        namePost:
+          type: string
+          example: 'Receptionniste'
+    Post:
+      type: object
+      properties:
+        idPost:
+          type: number
+          example: 1
+        namePost:
+          type: string
+          example: 'Receptionniste'
+    
+    NewLeaveType:
+      type: object
+      properties:        
+        type:
+          type: string
+          example: "congé de matérnité"
+        description:
+          type: string
+          example: "La durée d’un congé de maternité est de trois mois."
+        maxDuration:
+          type: number
+          example: 90
+          
+    LeaveType:
+      type: object
+      properties:        
+        idLeave:
+          type: number
+          example: 1
+        type:
+          type: string
+          example: "congé de matérnité"
+        description:
+          type: string
+          example: "La durée d’un congé de maternité est de trois mois."
+        maxDuration:
+          type: number
+          example: 90
+
+    NewLeave:
+      type: object
+      properties:
+        startDate:
+          type: string
+          format: date
+          example: '2022-07-08'
+        endDate:
+          type: string
+          format: date
+          example: '2022-07-10'
+        comment:
+          type: string
+          example: ''
+        duration: 
+          type: number
+          example: 3
+        workerId:
+          type: number
+          example: 3
+        leaveTypeId:
+          type: number
+          example: 1
+          
+    Leave:
+      type: object
+      properties:        
+        idLeave:
+          type: number
+          example: 1        
+        startDate:
+          type: string
+          format: date
+          example: '2022-07-08'
+        endDate:
+          type: string
+          format: date
+          example: '2022-07-10'
+        comment:
+          type: string
+          example: ''
+        duration: 
+          type: number
+          example: 3
+        worker:
+          $ref: '#/components/schemas/Worker'
+        leaveType:
+          $ref: '#/components/schemas/LeaveType'
+    
+    NewWorker:
+          type: object
+          properties:        
+            
+            firstName:
+              type: string
+              example: "lova"
+            lastName:
+              type: string
+              example: "RAFANOMEZANTSOA"
+            email:
+              type: string
+              format: email
+              example: "fenohasinana@gmail.com"
+            phone:
+              type: string
+              example: "+261331750545"
+            cin:
+              type: string
+              example: "212122454454"
+            birthDate:
+              type: string
+              format: date
+              example: "1960-05-24"
+            entranceDatetime:
+              type: string
+              format: date
+              example: "1982-05-24"
+            sex:
+              type: string
+              example: "M"
+            address:
+              type: string
+              example: "Ambohitrarahaba"
+            postId:
+              type: number
+              example: 1
+          
+    Worker:
+          type: object
+          properties:        
+            id:
+              type: number
+              example: 1
+            firstName:
+              type: string
+              example: "lova"
+            lastName:
+              type: string
+              example: "RAFANOMEZANTSOA"
+            email:
+              type: string
+              format: email
+              example: "fenohasinana@gmail.com"
+            phone:
+              type: string
+              example: "+261331750545"
+            cin:
+              type: string
+              example: "212122454454"
+            birthDate:
+              type: string
+              format: date
+              example: "1960-05-24"
+            entranceDatetime:
+              type: string
+              format: date
+              example: "1982-05-24"
+            sex:
+              type: string
+              example: "M"
+            address:
+              type: string
+              example: "Ambohitrarahaba"
+            post:
+              $ref: '#/components/schemas/Post'
+    
+    NewUser:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: 'Rindra'
+        lastName:
+          type: string
+          example: 'RAKOTO'
+        username:
+          type: string
+          example: 'rindra01'
+        password:
+          type: string
+          example: 'rindrapass'
+        role:
+          type: string
+          example: 'manager'
+    User:
+      type: object
+      properties:        
+        idUser:
+          type: number
+          example: 1
+        firstName:
+          type: string
+          example: 'Rindra'
+        lastName:
+          type: string
+          example: 'RAKOTO'
+        username:
+          type: string
+          example: 'rindra01'
+        password:
+          type: string
+          example: 'rindrapass'
+        role:
+          type: string
+          example: 'manager'
